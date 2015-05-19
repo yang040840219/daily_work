@@ -22,7 +22,7 @@
         http://www.springframework.org/schema/cache 
         http://www.springframework.org/schema/cache/spring-cache.xsd">
  
-    <context:component-scan base-package="com.cache.impl" />
+    <context:component-scan base-package="com.cache.impl" /> 
  
     <cache:annotation-driven />
     
@@ -41,6 +41,12 @@
     <bean
         id="cacheManager"
         class="org.springframework.data.redis.cache.RedisCacheManager"
-        c:template-ref="redisTemplate"/> 
+        c:template-ref="redisTemplate">
+          <property name="expires">
+        <map>
+            <entry key="HelloService" value="350"/>                    
+        </map>
+    </property>
+        </bean> 
  
 </beans>
