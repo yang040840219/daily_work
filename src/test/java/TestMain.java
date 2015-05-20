@@ -27,8 +27,7 @@ public class TestMain extends AbstractJUnit4SpringContextTests  {
 //    	 System.out.println(value);
     	 value = helloService.getMessage("b");
     	 System.out.println(value);
-    	 System.out.println(123);
-    	 System.out.println(456);
+    	 System.out.println(4567);
      log.info("test"); 
     	 
     }
