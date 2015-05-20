@@ -31,7 +31,6 @@ public class TestMain extends AbstractJUnit4SpringContextTests  {
     	 value = helloService.getMessage("b");
     	 System.out.println(value);
     	 
-    	 
     }
 		
 }
