@@ -3,13 +3,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.cache.impl.HelloServiceImpl;
 import com.cache.service.HelloService;
 
 
@@ -32,7 +29,8 @@ public class TestMain extends AbstractJUnit4SpringContextTests  {
     	 System.out.println(value);
 
     	 System.out.println("123");
-
+     log.info("test"); 
+    	 
     }
 		
 }
