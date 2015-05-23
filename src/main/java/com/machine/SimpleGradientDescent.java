@@ -3,7 +3,7 @@ package com.machine;
 public class SimpleGradientDescent {
 	
 	public static void main(String[] args) {
-		// y = kx + b
+		// y = 3x + 1
 		int[] input = { 1, 2, 3, 4, 5, 6, 7 };
 		int[] output = { 4, 7, 10, 13, 16, 19, 22 };
 		double k = 1;
