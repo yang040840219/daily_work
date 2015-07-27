@@ -11,14 +11,14 @@ public class TestProducer {
 
 	public static void main(String[] args) {
 		Properties props = new Properties();
-		props.put("bootstrap.servers","127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094");
+		props.put("bootstrap.servers","linux1:9092");
 		props.put("acks", "1");
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("partitioner.class", "kafka.SimplePartitioner");
 
 
-		String topic = "replicated-topic" ;
+		String topic = "test" ;
 		
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
 		for (int i = 0; i < 1000; i++) {
