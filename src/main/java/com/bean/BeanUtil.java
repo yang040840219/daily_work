@@ -91,7 +91,6 @@ public class BeanUtil {
 					String returnType = method.getReturnType().getName();
 					returnType = returnType.substring(returnType.lastIndexOf(".") + 1);
 					if (!returnType.equals("Class")) {
-						System.out.println(name + "#" + returnType + "  " + method);
 						map.put(name + "#" + returnType, method);
 					}
 				}

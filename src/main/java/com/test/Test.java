@@ -1,5 +1,6 @@
 package com.test;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -8,9 +9,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -169,6 +173,104 @@ public class Test {
 		
 		return newList;
 	}
+	
+	/**
+	 * 指定日期，数据缺失补零
+	 * @param start
+	 * @param end
+	 * @param data
+	 * @return
+	 */
+	public <T> List<T> addItemWithZero(String start, String end, List<T> data, Class<T> cls) {
+		String dayField = "date";
+
+		Date startDate = null;
+		Date endDate = null;
+
+		Set<String> fields = new HashSet<String>(); // 补数据的属性
+
+		if (data == null || data.size() == 0) { // 查询到的数据位空，需要根据 cls 来补数据
+			startDate = DateUtil.parseDateDay(start);
+			endDate = DateUtil.addDay(DateUtil.parseDateDay(end), 1);
+		} else {
+
+			List<String> days = new ArrayList<String>();
+			for (T t : data) {
+				days.add(String.valueOf(ReflectUtil.getFieldValue(t, dayField)));
+			}
+			if (days.contains(start)) {
+				return data;
+			}
+
+			startDate = DateUtil.parseDateDay(start);
+			endDate = DateUtil.parseDateDay(days.get(0));
+			int size = data.size();
+			for (int i = 0; i < size % 10; i++) {
+				T t = data.get(i);
+				Map<String, Method> methods = BeanUtil.getGetMethod(t.getClass());
+				Field[] fieldProperies = t.getClass().getDeclaredFields();
+				for (Entry<String, Method> entry : methods.entrySet()) {
+					Object o = null;
+					try {
+						o = entry.getValue().invoke(t);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
+					String f = entry.getKey().split("#")[0];
+					if (o != null) {
+						for (Field fp : fieldProperies) {
+							String fpname = fp.getName();
+							if (fpname.equalsIgnoreCase(f)) {
+								fields.add(fpname);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		List<String> durations = new ArrayList<String>();
+		while (startDate.before(endDate)) {
+			endDate = DateUtil.addDay(endDate, -1);
+			durations.add(DateUtil.dateFormatDay(endDate));
+		}
+
+		for (String day : durations) {
+			T tmp = null;
+			try {
+				tmp = (T) (cls.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			if (fields.size() > 0) {
+				for (String f : fields) {
+					try {
+						if (f.equals("date")) {
+							BeanUtils.setProperty(tmp, f, day);
+						} else {
+							BeanUtils.setProperty(tmp, f, 0);
+						}
+					} catch (IllegalAccessException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					BeanUtils.setProperty(tmp, dayField, day);
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+
+			data.add(0, tmp);
+		}
+
+		return data;
+	}
 
 	public static void main(String[] args) throws Exception {
 
@@ -177,22 +279,22 @@ public class Test {
 		Student s3 = new Student("2015-07-03", 20, 18);
 		Student s4 = new Student("2015-07-04", 20, 18);
 		Student s5 = new Student("2015-07-05", 20, 18);
-		Student s6 = new Student("2015-08-06", 20, 18);
-		Student s7 = new Student("2015-08-07", 20, 18);
-		Student s8 = new Student("2015-08-07", 20, 18);
 		List<Student> list = new ArrayList<Student>();
 		list.add(s1);
 		list.add(s2);
 		list.add(s3);
 		list.add(s4);
 		list.add(s5);
-		list.add(s6);
-		list.add(s7);
-		List<Student> newList = new Test().aggregate(list,1, "reqNum,finishNum");
+		//List<Student> newList = new Test().aggregate(list,1, "reqNum,finishNum");
 		
-		for(Student s:newList){
-			System.out.println(s);
-		}
+//		for(Student s:newList){
+//			System.out.println(s);
+//		}
+		
+		List<Student> empty = new ArrayList<Student>();
+		
+		List<Student> newlist = new Test().addItemWithZero("2015-06-01","2015-07-20",empty,Student.class);
+		System.out.println(newlist);
 
 	}
 }
