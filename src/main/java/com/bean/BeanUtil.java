@@ -1,5 +1,6 @@
 package com.bean;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -11,7 +12,29 @@ import java.util.Set;
 
 import org.springframework.util.Assert;
 
+import com.test.DateField;
+
 public class BeanUtil {
+	
+	/**
+	 * 获取 DateField 的 注解
+	 * @param cls
+	 * @return
+	 */
+	public static String getPropertyWithAnnotation(Class<?> cls){
+		Field[] fields =  cls.getDeclaredFields() ;
+		String property = null ;
+		for(Field field:fields){
+			boolean flag = field.isAnnotationPresent(DateField.class);
+			if(flag){
+				property = field.getName();
+				break ;
+			}
+		}
+		
+		return property ;
+	}
+
 
 	/**
 	 * 根据 类、属性 获得 set 方法

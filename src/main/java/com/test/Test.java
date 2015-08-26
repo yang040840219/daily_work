@@ -294,7 +294,11 @@ public class Test {
 		List<Student> empty = new ArrayList<Student>();
 		
 		List<Student> newlist = new Test().addItemWithZero("2015-06-01","2015-07-20",empty,Student.class);
-		System.out.println(newlist);
+		//System.out.println(newlist);
+		
+		
+		String property = BeanUtil.getPropertyWithAnnotation(Student.class);
+		System.out.println(property);
 
 	}
 }

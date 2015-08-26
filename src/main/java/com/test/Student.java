@@ -16,7 +16,7 @@ public Student() {
 }
 
 
-
+@DateField
 private String date ;
    /**
 	 * 订单数
