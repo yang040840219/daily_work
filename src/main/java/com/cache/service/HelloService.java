@@ -1,16 +1,18 @@
 package com.cache.service;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import com.cache.data.Person;
+
 
 
 public interface HelloService {
 	
-	@Cacheable(value={"HelloService"},key="#key+"+"'_'"+"+#key")
     public String getMessage(String key);
 	
 	
-	@CacheEvict(value={"HelloService"},key="#key+"+"'_'"+"+#key")
 	public void setMessage(String key,String value);
 	
+	
+	public void setPerson(Person person);
+	
+	public Person getPerson(Integer id);
 }

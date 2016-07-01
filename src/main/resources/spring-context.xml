@@ -59,11 +59,6 @@
         id="cacheManager"
         class="org.springframework.data.redis.cache.RedisCacheManager"
         c:template-ref="redisTemplate">
-          <property name="expires">
-        <map>
-            <entry key="HelloService" value="350"/>   <!-- 具体的超时配置 -->                  
-        </map>
-    </property>
-        </bean> 
+    </bean> 
  
 </beans>

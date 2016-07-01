@@ -10,11 +10,11 @@ public class Person implements Serializable {
 	 */
 	private static final long serialVersionUID = 5030264321831777056L;
 	
-	
-	private Student student ;
+	private transient Student student ;
 	
 	public Person(){
-		student = new Student("123");
+		System.out.println("创建 Person");
+			student = new Student("123");
 	}
 	
 	public String printStudentName(){
@@ -22,6 +22,9 @@ public class Person implements Serializable {
 	}
 
 	public Student getStudent() {
+		if(student == null){
+			student = new Student("123");
+		}
 		return student;
 	}
 

@@ -16,9 +16,9 @@ public class TestSeria {
 	        {
 			   //输出流保存的文件名为 my.out ；ObjectOutputStream能把Object输出成Byte流
 	            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("my.out"));
-	            //Student s = new Student("a");
+	            Student s = new Student("a");
 	            Person p = new Person();
-	            //p.setStudent(s);
+	            p.setStudent(s);
 	            oos.writeObject(p); 
 	            oos.flush(); 
 	            oos.close();
@@ -27,6 +27,7 @@ public class TestSeria {
 	            e.printStackTrace();
 	        } 
 		 
+		 System.out.println("----------------------------------------");
 		 ObjectInputStream oin = null;
 	        try
 	        {
@@ -38,7 +39,7 @@ public class TestSeria {
 	        Person mts = null;
 	        try {
 	            mts = (Person) oin.readObject();
-	            System.out.println(mts.printStudentName());
+	            System.out.println(mts.getStudent().getName());
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (IOException e) {

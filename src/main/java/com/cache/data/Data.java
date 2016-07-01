@@ -8,17 +8,15 @@ public class Data {
    
 	private static Map<String,String> map = new HashMap<String,String>();
 	
+	private static Map<Integer,Person> persons = new HashMap<Integer,Person>();
+	
 	static {
 		map.put("a","123");
 		map.put("b", "456");
 	}
 	
 	public static String getData(String key){
-		try {
-			TimeUnit.SECONDS.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		System.out.println("read from map");
 		return map.get(key) ;
 	}
 	
@@ -26,4 +24,13 @@ public class Data {
 		map.put(key, value);
 	}
 	
+	
+	public static Person getPerson(Integer id){
+		System.out.println("read from map");
+		return persons.get(id);
+	}
+	
+	public static void setPerson(Person person){
+		persons.put(person.getId(), person);
+	}
 }

@@ -20,6 +20,7 @@ public class Student implements Serializable {
 	}
 
 	public Student(String name) {
+		System.out.println("创建 Student");
 		this.name = name;
 	}
 	

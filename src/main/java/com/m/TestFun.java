@@ -1,6 +1,7 @@
 package com.m;
 
-import java.text.NumberFormat;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TestFun {
 	
@@ -12,12 +13,16 @@ public class TestFun {
 		
 	}
 	
-	public static void main(String []args){
+	public static void main(String []args) throws Exception{
 		
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setGroupingUsed(false);
-
-		System.out.println(nf.format(1233122333.2));
+		Map<String,Integer> map = new ConcurrentHashMap<String,Integer>();
+		
+		map.put("abc",1);
+		System.out.println(map);
+		int a = map.get("abc");
+		System.out.println(map.containsKey("abc"));
+		map.put("abc", a + 2 );
+		System.out.println(map);
+		
 	}
-
 }

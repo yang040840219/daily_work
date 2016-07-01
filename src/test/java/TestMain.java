@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -24,6 +27,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Transaction;
 
+import com.cache.data.Person;
 import com.cache.service.HelloService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,24 +39,89 @@ public class TestMain extends AbstractJUnit4SpringContextTests {
 	private HelloService helloService;
 
 	@Resource(name = "redisTemplate")
-	private ValueOperations<Serializable, Serializable> valueOperations;
+	private ValueOperations<String, Serializable> valueOperations;
+	
+	@Resource(name = "redisTemplate")
+	private HashOperations<String,String,Serializable> hashOperations;
+	
+	@Autowired
+	private RedisTemplate<String,Serializable> redisTemplate ;
 
 	@Autowired
 	private JedisPool jedisPool;
 
 	@Test
 	public void test() {
-		String value = helloService.getMessage("a");
-		System.out.println(value);
-		// helloService.setMessage("a","345");
+		//String value = helloService.getMessage("a");
+		//System.out.println(value);
+	//	 helloService.setMessage("a","345");
 		// value = helloService.getMessage("a");
 		// System.out.println(value);
-		value = helloService.getMessage("b");
-		System.out.println(value);
-		log.info("test");
+//		value = helloService.getMessage("b");
+//		System.out.println(value);
+//		log.info("test");
 
 	}
 
+	@Test
+	public void testObject(){
+		Person p = new Person();
+		p.setId(1);
+		p.setUsername("abc");
+		
+		helloService.setPerson(p);
+		
+		
+	}
+	
+	@Test
+	public void testGetObject(){
+//		Person p = new Person();
+//		p.setId(1);
+//		p.setUsername("abc");
+//		helloService.setPerson(p);
+//		
+		Person p1 = helloService.getPerson(1);
+//		Person p2 = new Person();
+//		p2.setId(2);
+//		p2.setUsername("abc");
+		
+		//helloService.setPerson(p2);
+		
+		Person p3 = helloService.getPerson(2);
+		System.out.println(p1);
+		System.out.println(p3);
+	}
+	
+	@Test
+	public void testRedisTemplate(){
+		ListOperations<String,Serializable> lo = redisTemplate.opsForList();
+		Person p = new Person();
+		p.setId(1);
+		p.setUsername("abc");
+		lo.leftPush("person",p);
+		System.out.println(lo.leftPop("person"));
+	}
+	
+	@Test
+	public void testRedisValue(){
+		Person p = new Person();
+		p.setId(1);
+		p.setUsername("abc");
+		valueOperations.set("person_1",p);
+		System.out.println(valueOperations.get("person_1"));
+	}
+	
+	@Test
+	public void testRedisHash(){
+		Person p = new Person();
+		p.setId(1);
+		p.setUsername("abc");
+		hashOperations.put("h_person","id",1);
+		
+		System.out.println(hashOperations.get("h_person","id"));
+	}
+	
 	@Test
 	public void testPipline() {
 		Jedis jedis = jedisPool.getResource();
