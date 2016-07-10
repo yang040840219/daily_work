@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +32,7 @@ import redis.clients.jedis.Transaction;
 
 import com.cache.data.Person;
 import com.cache.service.HelloService;
+import com.util.RedisLock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:/spring-context.xml" })
@@ -195,6 +199,49 @@ public class TestMain extends AbstractJUnit4SpringContextTests {
 		Matcher m = p.matcher(s);
 		System.out.println(m.matches());
 		
+	}
+	
+	
+	@Test 
+	public void testLock(){
+		
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		final String lockKey = "lock";
+		for(int i = 0 ;i < 10; i++){
+			executorService.execute(new Runnable(){
+				@Override
+				public void run() {
+					boolean flag = RedisLock.getLock(valueOperations, lockKey);
+					System.out.println(Thread.currentThread().getId() + " " + flag);
+				}
+			});
+		}
+		
+		try {
+			executorService.awaitTermination(10,TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
+	@Test
+	public void testReleaseLock(){
+		String lockKey = "lock";
+		RedisLock.releaseLock(valueOperations, lockKey);
+	}
+	
+	
+	@Test
+	public void testGet(){
+		System.out.println((long)(valueOperations.get("lock")));
+	}
+	
+	@Test
+	public void testGetAndSet(){
+		System.out.println((long)(valueOperations.getAndSet("abc",123)));
 	}
 	
 	

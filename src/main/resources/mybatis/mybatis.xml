@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+	default-autowire="no" default-lazy-init="true">
+
+
+	<bean id="dataSource_test" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		
+		<!-- 基本属性 url、user、password -->
+		<property name="url" value="${test.jdbc.url}" />
+		<property name="username" value="${test.jdbc.username}" />
+		<property name="password" value="${test.jdbc.password}" />
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="maxActive" value="20" />
+
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+
+	</bean>
+
+
+	<bean id="sqlSessionFactory_test" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource_test" />
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.model" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-configuration.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:mybatis/mapper/*.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="jdbcTxServiceOperation"
+			expression="execution(* com.service.impl.*ServiceImpl.*(..))" />
+		<aop:advisor pointcut-ref="jdbcTxServiceOperation"
+			advice-ref="jdbcTxAdvice" />
+	</aop:config>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<tx:advice id="jdbcTxAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Throwable" />
+			<tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="remove*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="create*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="modify*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="remove*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="cancel*" isolation="DEFAULT" propagation="REQUIRED"  rollback-for="Throwable" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="page*" read-only="true" />
+			<tx:method name="query*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory_test" />
+  		<property name="basePackage" value="com.mapper" />
+	</bean>
+
+
+</beans>
