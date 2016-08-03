@@ -1,5 +1,8 @@
 package daily.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,11 +15,13 @@ public class TestLog {
 	}
 	
 	public static void main(String args[]){
-		String  s = "s,a,n,,,";
-		String [] array = s.split(",");
-		System.out.println(array.length);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(1468218180000l);
+		System.out.println(calendar.getTime());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String dstring = sdf.format(calendar.getTime());
+		System.out.println(dstring);
 		
-		String a = null ;
 		
 	}
 }

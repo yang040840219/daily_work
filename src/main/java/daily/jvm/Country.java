@@ -9,6 +9,7 @@ public class Country {
 	  super();
 	  this.name = name;
 	  this.population = population;
+	  Integer [] args = new Integer[1024*1024];
 	 }
 	 public String getName() {
 	  return name;
@@ -56,4 +57,11 @@ public class Country {
 	  return false;
 	 }
 	 
+	@Override
+	public String toString() {
+		return "Country [name=" + name + ", population=" + population + "]";
 	}
+	 
+	}
+
+   
