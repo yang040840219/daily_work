@@ -11,13 +11,13 @@ public class RedisLock {
 	public static boolean getLock(ValueOperations<String,Serializable> valueOperations,String lockKey){
 		long currentMills = System.currentTimeMillis() ;
 		try{
-			boolean flag = valueOperations.setIfAbsent(lockKey,currentMills);
+			boolean flag = valueOperations.setIfAbsent(lockKey,currentMills); // 调用reids setnx
 			if(!flag){
 				Object lockValue = valueOperations.get(lockKey);
 				if(lockValue == null){
-					return valueOperations.setIfAbsent(lockKey,currentMills) ; // 没有lockKey
+					return valueOperations.setIfAbsent(lockKey,currentMills) ; // 没有 value , 重新执行
 				}
-				long longLockValue = (long)(lockValue);
+				long longLockValue = (long)(lockValue); // 锁的当前值
 				boolean isExpire = currentMills - longLockValue > DEFAULTEXPIRE ;// 没有获取到锁，判断超时
 				if(isExpire){
 					Object oldLockValue = valueOperations.getAndSet(lockKey,currentMills) ;
@@ -25,7 +25,7 @@ public class RedisLock {
 						return valueOperations.setIfAbsent(lockKey,currentMills) ; // 尝试获取锁
 					}
 					long longOldLockValue = (long)(oldLockValue);
-					if(longLockValue == longOldLockValue){ // 锁超时，但获取到锁
+					if(longLockValue == longOldLockValue){ // 锁超时,判断getset 值,但获取到锁
 						return true;
 					}else{
 						return false;
@@ -49,7 +49,6 @@ public class RedisLock {
 		}catch(Exception e){
 			return false;
 		}
-		
 	}
 	
 }
